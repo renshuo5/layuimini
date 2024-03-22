@@ -65,7 +65,13 @@
                 <input type="text" name="href" placeholder="请输入链接" value="" class="layui-input">
             </div>
         </div>
-
+        <div class="layui-form-item">
+            <label class="layui-form-label ">是否隐藏</label>
+            <div class="layui-input-block" lay-filter="is_hidden">
+                <input type="radio" name="isHidden" value="0" title="否" checked/>
+                <input type="radio" name="isHidden" value="1" title="是"/>
+            </div>
+        </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">打开方式</label>
@@ -120,24 +126,10 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (fieldObj) {
-
-//                var index = layer.alert(JSON.stringify(fieldObj.field), {
-//                    title: '最终的提交信息'
-//                }, function () {
-//
-//                    // 关闭弹出层
-//                    layer.close(index);
-//
-//                    var iframeIndex = parent.layer.getFrameIndex(window.name);
-//                    parent.layer.close(iframeIndex);
-//
-//                });
-
             var url = "/api/v1/sys/menuInfo";
             ajaxUtil.post(url, JSON.stringify(fieldObj.field), success, fail, true);
             return false;
         });
-
         function success(res) {
             var index = layer.alert("添加成功", {
                 title: '提示'
@@ -148,7 +140,6 @@
                 parent.layer.close(iframeIndex);
             });
         }
-
         function fail() {
             layer.msg("添加报错，请联系开发");
         }

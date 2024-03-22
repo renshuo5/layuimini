@@ -66,7 +66,13 @@
                 <input type="text" name="href" placeholder="请输入链接" value="" class="layui-input">
             </div>
         </div>
-
+        <div class="layui-form-item">
+            <label class="layui-form-label ">是否隐藏</label>
+            <div class="layui-input-block" lay-filter="is_hidden">
+                <input type="radio" name="isHidden" value="0" title="否" checked/>
+                <input type="radio" name="isHidden" value="1" title="是"/>
+            </div>
+        </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">打开方式</label>
@@ -129,6 +135,7 @@
                 "href": data.href,
                 "isRoot": data.isRoot, // 单选
                 "isFun": data.isFun,
+                "isHidden": data.isHidden,
                 "orderNum": data.orderNum,
                 "parentId" :data.parentId,
                 "parentMenu" :data.parentId
