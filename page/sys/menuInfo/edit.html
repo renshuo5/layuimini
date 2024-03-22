@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+
+    <form class="layui-form" lay-filter="edit-val-filter">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">菜单名称</label>
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="">
+                <input type="text" name="title" lay-verify="required" lay-reqtext="菜单名称" placeholder="菜单名称" value=""
+                       class="layui-input">
+                <tip>菜单名称</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">是否根节点</label>
+            <div class="layui-input-block" lay-filter="is_root">
+                <input type="radio" name="isRoot" value="0" title="否" checked/>
+                <input type="radio" name="isRoot" value="1" title="是"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">是否按钮</label>
+            <div class="layui-input-block" lay-filter="is_fun">
+                <input type="radio" name="isFun" value="0" title="否" checked/>
+                <input type="radio" name="isFun" value="1" title="是"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">上级菜单</label>
+            <div class="layui-input-block">
+                <select id="parentMenu" name='parentId' lay-filter="parentMenu">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">权限编码</label>
+            <div class="layui-input-block">
+                <input type="text" name="code" lay-reqtext="权限编码" placeholder="请输入权限编码" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">icon</label>
+            <div class="layui-input-block">
+                <input type="text" name="icon" placeholder="请输入icon" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接</label>
+            <div class="layui-input-block">
+                <input type="text" name="href" placeholder="请输入链接" value="" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">打开方式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="target" value="_self" title="本页打开" checked="">
+                <input type="radio" name="target" value="_blank" title="新页签打开">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="orderNum" placeholder="排序" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+<script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../../js/lay-config.js?v=1.0.5" charset="utf-8"></script>
+<script src="../../../js/check_token.js"></script>
+
+<script>
+    function loadData(data){
+        layui.use(['form', 'ajaxUtil', 'select'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                ajaxUtil = layui.ajaxUtil,
+                select = layui.select,
+                $ = layui.$;
+
+            //因为是异步ajax获取并渲染，还未执行success方法，主线程就执行到form.val所以不会赋值给select
+            select.render({
+                id: '#parentMenu', //元素id
+                url: '/api/v1/sys/menuInfosNoBut', //请求接口
+                param: {}, //请求参数
+                value: 'id',  //select value对应的key
+                text: 'title', //展示文字对应的key
+                defaultValue: data.parentId, //回显选中的信息,主线程就执行到form.val所以不会赋值给select
+                data: function (data) {
+                    //对返回值进行处理，可选
+                    return data;
+                },
+                success: function () {
+                    //渲染
+                    form.render('select');
+                }
+            });
+
+            form.val('edit-val-filter', {
+                "id":data.id,
+                "title": data.title, // "name": "value"
+                "code": data.code,
+                "icon": data.icon,
+                "href": data.href,
+                "isRoot": data.isRoot, // 单选
+                "isFun": data.isFun,
+                "orderNum": data.orderNum,
+                "parentId" :data.parentId,
+                "parentMenu" :data.parentId
+            });
+
+            //监听提交
+            form.on('submit(saveBtn)', function (fieldObj) {
+
+//                var index = layer.alert(JSON.stringify(fieldObj.field), {
+//                    title: '最终的提交信息'
+//                }, function () {
+//
+//                    // 关闭弹出层
+//                    layer.close(index);
+//
+//                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+//                    parent.layer.close(iframeIndex);
+//
+//                });
+
+                var url =  "/api/v1/sys/menuInfo/"+data.id;
+                ajaxUtil.put(url, JSON.stringify(fieldObj.field), success, fail, true);
+                return false;
+            });
+
+            function success(res) {
+                var index = layer.alert("修改成功", {
+                    title: '提示'
+                }, function () {
+                    // 关闭弹出层
+                    layer.close(index);
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                });
+            }
+            function fail() {
+                layer.msg("修改报错，请联系开发");
+            }
+        });
+    }
+</script>
+</body>
+</html>

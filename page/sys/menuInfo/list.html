@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>menu</title>
+    <link rel="stylesheet" href="../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <style>
+        .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
+            height: 34px;
+            line-height: 34px;
+            padding: 0 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div>
+            <div class="layui-btn-group">
+                <button class="layui-btn" id="btn-expand">全部展开</button>
+                <button class="layui-btn layui-btn-normal" id="btn-fold">全部折叠</button>
+            </div>
+            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        </div>
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<!--<script src="../../../lib/layui-2.9.js" charset="utf-8"></script>-->
+<script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="../../../js/check_token.js"></script>
+
+<script>
+    layui.use(['table', 'treetable', 'ajaxUtil'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var ajaxUtil = layui.ajaxUtil;
+        var layer = layui.layer;
+        // 渲染表格
+        layer.load(2);
+
+        treeTableLoad();
+
+        function treeTableLoad() {
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: 0,
+                treeIdName: 'id',
+                treePidName: 'parentId',
+                elem: '#munu-table',
+                url: '/api/v1/sys/menuInfos',
+//            url: '../api/menus.json',
+                page: false,
+                cols: [[
+                    {type: 'numbers'},
+                    {field: 'title', minWidth: 200, title: '权限名称'},
+                    {field: 'code', title: '权限标识'},
+                    {
+                        field: 'icon', title: '图标'
+                    },
+                    {field: 'target', title: '打开方式'},
+                    {field: 'href', title: '菜单url'},
+                    {field: 'orderNum', width: 80, align: 'center', title: '排序号'},
+                    {
+                        field: 'isFun', width: 80, align: 'center', templet: function (d) {
+                        if (d.isFun == 1) {
+                            return '<span class="layui-badge layui-bg-gray">按钮</span>';
+                        }
+                        if (d.isRoot == 1) {
+                            return '<span class="layui-badge layui-bg-blue">目录</span>';
+                        } else {
+                            return '<span class="layui-badge-rim">菜单</span>';
+                        }
+                    }, title: '类型'
+                    },
+                    {templet: '#auth-state', width: 120, align: 'center', title: '操作'}
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+        });
+
+        //监听工具条
+        table.on('tool(munu-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+//            if (layEvent === 'del') {
+//                layer.msg('删除' + data.id);
+//            } else if (layEvent === 'edit') {
+//                layer.msg('修改' + data.id);
+//            }
+
+            if (layEvent === 'edit') {
+
+                var url = '/api/v1/sys/menuInfo/' + data.id;
+                ajaxUtil.get(url, null, success, failHandler, true);
+                return false;
+            } else if (layEvent === 'delete') {
+                layer.confirm('是否删除', function (index) {
+                    var url = '/api/v1/sys/menuInfo/' + data.id;
+                    ajaxUtil.delete(url, null, undefined, undefined, true);
+                    obj.del();
+                    layer.close(index);
+                });
+            }
+
+        });
+        function failHandler() {
+            layui.msg("编辑页面打开报错");
+        }
+
+
+        function success(res) {
+            var data = res.data;
+            var index = layer.open({
+                title: '编辑菜单',
+                type: 2,
+                shade: 0.2,
+                maxmin: true,
+                shadeClose: true,
+                area: ['85%', '85%'],
+                param: data,
+                data:data,
+                content: 'edit.html',
+                success: function (layero, idx) {
+                    // 获取content窗口后再渲染
+                    var updateWin = layero.find('iframe')[0].contentWindow;
+                    updateWin.loadData(data);
+                    // 数据回显
+//                    var body = layer.getChildFrame('body', index);
+//                    body.find('input[name="id"]').val(data.id);
+//                    body.find('input[name="title"]').val(data.title);
+//                    body.find('input[name="code"]').val(data.code);
+//                    body.find('input[name="icon"]').val(data.icon);
+//                    body.find('input[name="href"]').val(data.href);
+//                    body.find('input[name="isRoot"][value="' + data.isRoot + '"]').prop('checked', true);
+//                    body.find('input[name="isFun"][value="' + data.isFun + '"]').prop('checked', true);
+//                    body.find('input[name="orderNum"]').val(data.orderNum);
+//                    body.find('#parentMenu').val(data.parentId);
+
+                },
+                end: function () {
+                    treeTableLoad();
+                }
+            });
+            $(window).on("resize", function () {
+                layer.full(index);
+            });
+        }
+
+    });
+</script>
+</body>
+</html>
