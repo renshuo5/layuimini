@@ -48,6 +48,12 @@
           "target": "_self"
         },
         {
+          "title": "Layui标签输入框",
+          "href": "page/inputTag.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
+        {
           "title": "菜单管理二",
           "href": "page/menu.html",
           "icon": "fa fa-window-maximize",

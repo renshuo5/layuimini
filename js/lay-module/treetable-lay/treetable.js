@@ -65,7 +65,6 @@ layui.define(['layer', 'table'], function (exports) {
                 count: param.data.length,
                 limit: param.data.length
             };
-            debugger
             param.cols[0][param.treeColIndex].templet = function (d) {
                 var mId = d.id;
                 var mPid = d.pid;

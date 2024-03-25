@@ -15,23 +15,33 @@
 </head>
 <body>
 <div class="layuimini-container">
-
     <div class="layuimini-main">
-        <div>
+        <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
-                <button class="layui-btn layui-btn-sm data-add-btn" id="btn-add">添加</button>
-                <button class="layui-btn layui-btn-sm" id="btn-expand">全部展开</button>
-                <button class="layui-btn layui-btn-sm layui-btn-normal" id="btn-fold">全部折叠</button>
+                <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon">&#xe654;</i>添加
+                </button>
+                <button class="layui-btn layui-btn-sm" lay-event="expand"><i class="layui-icon">&#xe654;</i>全部展开
+                </button>
+                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="fold"><i class="layui-icon">&#xe654;</i>全部折叠
+                </button>
+
+
+                <button class="layui-btn layui-btn-sm" lay-event="addsa"><i class="layui-icon layui-icon-light">&#xe6b1;</i>雪花</button>
+                <button class="layui-btn layui-btn-sm" lay-event="updata"><i class="layui-icon layui-icon-snowflake">&#xe674;</i>修改</button>
+                <button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon layui-icon-bluetooth">&#xe640;</i>删除</button>
+                <button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon layui-icon-time">&#xe666;</i>刷新</button>
             </div>
-            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
-        </div>
+        </script>
+        <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+
+        <script type="text/html" id="auth-state">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        </script>
     </div>
 </div>
 <!-- 操作列 -->
-<script type="text/html" id="auth-state">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
-</script>
+
 
 <!--<script src="../../../lib/layui-2.9.js" charset="utf-8"></script>-->
 <script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
@@ -59,6 +69,7 @@
                 elem: '#munu-table',
                 url: '/api/v1/sys/menuInfos',
 //            url: '../api/menus.json',
+                toolbar: '#toolbarDemo',
                 page: false,
                 cols: [[
                     {type: 'numbers'},
@@ -99,34 +110,6 @@
             });
         }
 
-        $('#btn-expand').click(function () {
-            treetable.expandAll('#munu-table');
-        });
-
-        $('#btn-fold').click(function () {
-            treetable.foldAll('#munu-table');
-        });
-
-
-        $('#btn-add').click(function () {
-            var index = layer.open({
-                title: '添加菜单',
-                type: 2,
-                shade: 0.2,
-                maxmin: true,
-                shadeClose: true,
-                area: ['85%', '85%'],
-                content: 'add.html',
-                end: function () {
-                    treeTableLoad();
-                }
-            });
-            $(window).on("resize", function () {
-                layer.full(index);
-            });
-        });
-
-
         table.on('toolbar(munu-table)', function (obj) {
             switch (obj.event) {
                 case 'add':
@@ -142,6 +125,12 @@
                     $(window).on("resize", function () {
                         layer.full(index);
                     });
+                    break;
+                case 'expand':
+                    treetable.expandAll('#munu-table');
+                    break;
+                case 'fold':
+                    treetable.foldAll('#munu-table');
                     break;
                 case 'LAYTABLE_TIPS':
                     layer.alert('自定义工具栏图标按钮');
@@ -172,7 +161,6 @@
         function failHandler() {
             layui.msg("编辑页面打开报错");
         }
-
 
         function success(res) {
             var data = res.data;

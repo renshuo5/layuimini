@@ -29,5 +29,6 @@ layui.config({
     layarea: 'layarea/layarea', //  省市县区三级联动下拉选择器
     ajaxUtil: 'ajaxUtil', //  省市县区三级联动下拉选择器
     select: 'select/select',
-    layselect: 'select/layselect'
+    layselect: 'select/layselect',
+    inputTag:'inputTag/inputTag'
 });
