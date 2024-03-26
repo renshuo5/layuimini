@@ -6,19 +6,19 @@ layui.use(['layer', 'jquery', 'ajaxUtil'], function () {
     layer.ready(function () {
         // 如果会话性存储 数据为空，返回登录界面
         if (layui.data('LocalData') === {}) {
-            location.href = 'login.html'; //登录主页
+            location.href = '/login.html'; //登录主页
         } else {
             // 如果会话性存储data键为空
             if (layui.data('LocalData') != null) {
                 // 如果会话性存储data键第一个键token为空
                 if (ajaxUtil.getData("token") === '' || ajaxUtil.getData("token") ===undefined) {
                     // 返回到登录界面
-                    location.href = 'login.html'; //登录主页
+                    location.href = '/login.html'; //登录主页
                 }
             }
             // 返回登录界面
             else {
-                location.href = 'login.html'; //登录主页
+                location.href = '/login.html'; //登录主页
             }
         }
         ajaxUtil.setData("lastTime", new Date().getTime());
@@ -46,7 +46,7 @@ layui.use(['layer', 'jquery', 'ajaxUtil'], function () {
                 shadeClose: true,
                 title: '提示'
             }, function(){
-                location.href = 'login.html'; //登录页面
+                location.href = '/login.html'; //登录页面
             });
 
         }
