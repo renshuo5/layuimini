@@ -121,6 +121,9 @@
                         shadeClose: true,
                         area: ['85%', '85%'],
                         content: 'add.html',
+                        end: function () {
+                            treeTableLoad();
+                        }
                     });
                     $(window).on("resize", function () {
                         layer.full(index);
