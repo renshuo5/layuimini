@@ -32,5 +32,6 @@ layui.config({
     select: 'select/select',
     layselect: 'select/layselect',
     inputTag:'inputTag/inputTag',
-    treeSelect: 'treeSelect/treeSelect'
+    treeSelect: 'treeSelect/treeSelect',
+    premUtil: 'premUtil'
 });

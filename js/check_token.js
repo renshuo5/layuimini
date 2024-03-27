@@ -1,7 +1,8 @@
-layui.use(['layer', 'jquery', 'ajaxUtil'], function () {
+layui.use(['layer', 'jquery', 'ajaxUtil','premUtil'], function () {
     var $ = layui.jquery,
         form = layui.form,
         ajaxUtil = layui.ajaxUtil,
+        premUtil = layui.premUtil,
         layer = layui.layer;
     layer.ready(function () {
         // 如果会话性存储 数据为空，返回登录界面
@@ -22,6 +23,10 @@ layui.use(['layer', 'jquery', 'ajaxUtil'], function () {
             }
         }
         ajaxUtil.setData("lastTime", new Date().getTime());
+
+        //按钮权限
+        premUtil.renderPerm();
+
     });
 
 

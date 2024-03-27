@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <!--<link rel="stylesheet" href="../../../lib/layui-2.9.7.css" media="all">-->
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <form class="layui-form" lay-filter="edit-val-filter">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">菜单名称</label>
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="">
+                <input type="text" name="title" lay-verify="required" lay-reqtext="菜单名称" placeholder="菜单名称" value=""
+                       class="layui-input">
+                <tip>菜单名称</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">是否根节点</label>
+            <div class="layui-input-block" lay-filter="is_root">
+                <input type="radio" name="isRoot" value="0" title="否" checked/>
+                <input type="radio" name="isRoot" value="1" title="是"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">是否按钮</label>
+            <div class="layui-input-block" lay-filter="is_fun">
+                <input type="radio" name="isFun" value="0" title="否" checked/>
+                <input type="radio" name="isFun" value="1" title="是"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+
+
+            <label class="layui-form-label ">权限编码</label>
+            <div class="layui-input-block">
+                <input type="hidden" name="parentId" value="">
+                <input type="text" name="parentName" lay-filter="parentMenu" autocomplete="on" placeholder="请选择菜单"
+                       class="layui-input layui-input-inline" >
+                <i class="layui-icon layui-icon-search input-icon" lay-on="openTreeDiv"></i>
+            </div>
+
+
+            <div class="showChooseDiv" style="display: none;  padding: 20px">
+                <div id="dept_main" style="margin-right: 2%;">
+                    <div id="menu_tree">
+                    </div>
+                    <div class="layui-form-item float-right">
+                        <div class="layui-input-block">
+                            <!--<button class="layui-btn layui-btn-normal layui-btn-sm" id="lay-submit-Choose">确定</button>-->
+                            <button type="button" class="layui-btn layui-btn-sm" lay-on="getChecked">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label ">权限编码</label>
+            <div class="layui-input-block">
+                <input type="text" name="code" lay-reqtext="权限编码" placeholder="请输入权限编码" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">icon</label>
+            <div class="layui-input-block">
+                <input type="text" name="icon" placeholder="请输入icon" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接</label>
+            <div class="layui-input-block">
+                <input type="text" name="href" placeholder="请输入链接" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">是否隐藏</label>
+            <div class="layui-input-block" lay-filter="is_hidden">
+                <input type="radio" name="isHidden" value="0" title="否" checked/>
+                <input type="radio" name="isHidden" value="1" title="是"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">打开方式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="target" value="_self" title="本页打开" checked="">
+                <input type="radio" name="target" value="_blank" title="新页签打开">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="orderNum" placeholder="排序" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="../../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="../../../js/check_token.js"></script>
+
+<script>
+    layui.use(['form', 'ajaxUtil', 'treeSelect'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            ajaxUtil = layui.ajaxUtil,
+            tree = layui.tree,
+            util = layui.util,
+            treeSelect = layui.treeSelect,
+            $ = layui.$;
+
+        tree.render({
+            elem: '#menu_tree',
+            data: getData(),
+            id: 'parentMenuTree',
+            showCheckbox: true,     //是否显示复选框
+            onlyIconControl: true
+        });
+        function getData() {
+            var data = [];
+            $.ajax({
+                url: "/api/v1/sys/menuInfosTreeCheck",//后台数据请求地址
+                dataType: 'json',
+                type: 'post',
+                async: false,
+                success: function (resut) {
+                    if (resut.code == 200) {
+                        data = resut.data;
+                    } else {
+                        layer.msg(resut.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg("查询报错，请联系开发");
+                }
+            });
+            return data;
+        }
+
+        // 按钮事件
+        util.event('lay-on', {
+            openTreeDiv: function () {
+                layer.open({
+                    type: 1,
+                    title: "选择",
+                    area: ['18%', '50%'],
+                    content: $(".showChooseDiv"),
+                    maxmin: false,
+                    shadeClose: true,
+                    shade: false
+                });
+            },
+            getChecked: function (othis) {
+                var getData = tree.getChecked('parentMenuTree'); // 获取选中节点的数据
+//                layer.alert(JSON.stringify(getData), {shade: 0});
+                if (getData.length < 1) {
+                    layer.alert("请选择一项");
+                } else {
+                    var itemName = "";
+                    var itemId = "";
+                    //需要每一层都显示
+                    for (var i = 0; i < getData.length; i++) {
+                        for (var j = 0; j < getData[i].children.length; j++) {
+                            var child = getData[i].children[j].children;
+                            if (child != '' && child != null && child.length != 0) {
+                                for (var k = 0; k < child.length; k++) {
+                                    itemName += child[k].title + ",";
+                                    itemId += child[k].id + ",";
+                                }
+                            }
+                        }
+                    }
+                    itemName = (itemName.substring(itemName.length - 1) == ',') ? itemName.substring(0, itemName.length - 1) : itemName;
+                    itemId = (itemId.substring(itemId.length - 1) == ',') ? itemId.substring(0, itemId.length - 1) : itemId;
+                    $("[name='parentName']").val(itemName);
+                    $("[name='parentId']").val(itemId);
+                    layer.close(layer.index);
+                }
+
+            },
+            setChecked: function () {
+                tree.setChecked('parentMenuTree', [12, 16]); // 勾选对应 id 值的节点
+            },
+            reload: function () {
+                tree.reload('parentMenuTree', {}); // 重载实例
+            }
+        });
+
+//        treeSelect.render({
+//            // 选择器
+//            elem: '#parentMenu',
+//            // 数据
+//            data: '/api/v1/sys/menuInfosNoBut',
+//            // 异步加载方式：get/post，默认get
+//            type: 'post',
+//            // 占位符
+//            placeholder: '上级菜单',
+//            // 是否开启搜索功能：true/false，默认false
+//            search: true,
+//            // 一些可定制的样式
+//            style: {
+//                folder: {
+//                    enable: true
+//                },
+//                line: {
+//                    enable: true
+//                }
+//            },
+//            // 点击回调
+//            click: function(d){
+////                    console.log(d);
+////                    console.log($('#parentMenu').val());
+//
+//            },
+//            // 加载完成后的回调函数
+//            success: function (d) {
+////                选中节点，根据id筛选
+////                    console.log($('#parentMenu').val());
+////                获取zTree对象，可以调用zTree方法
+//                var treeObj = treeSelect.zTree('parentMenu');
+////                    console.log(treeObj);
+////                刷新树结构
+//                treeSelect.refresh('parentMenu');
+//            }
+//        });
+
+        //监听提交
+        form.on('submit(saveBtn)', function (fieldObj) {
+            var url = "/api/v1/sys/menuInfo";
+            ajaxUtil.post(url, JSON.stringify(fieldObj.field), success, fail, true);
+            return false;
+        });
+        function success(res) {
+            var index = layer.alert("添加成功", {
+                title: '提示'
+            }, function () {
+                // 关闭弹出层
+                layer.close(index);
+                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(iframeIndex);
+            });
+        }
+
+        function fail() {
+            layer.msg("添加报错，请联系开发");
+        }
+    });
+</script>
+</body>
+</html>

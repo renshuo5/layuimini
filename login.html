@@ -343,10 +343,11 @@
 <!--<script src="../js/lay-module/ajaxUtil.js" charset="utf-8"></script>-->
 <!--<script src="../lib/layui-2.9.js" charset="utf-8"></script>-->
 <script>
-    layui.use(['form', 'jquery','ajaxUtil'], function () {
+    layui.use(['form', 'jquery', 'ajaxUtil', 'premUtil'], function () {
         var $ = layui.jquery,
             form = layui.form,
             ajaxUtil = layui.ajaxUtil,
+            premUtil = layui.premUtil,
             layer = layui.layer;
 
         // 登录过期的时候，跳出ifram框架
@@ -399,11 +400,24 @@
 
         }
 
-        function loginSuccess(data){
+        function loginSuccess(data) {
             ajaxUtil.setData("token", data.data.token);
             ajaxUtil.setData("refresh_token", data.data.token);
 
+            //TODO cooki没有存入
             //$.cookie("R_SESS",data.data.token);
+
+            //获取当前登录的用户信息以及默认角色的id，通过id查询设置的按钮信息
+            $.get('/api/v1/me', function (res) {
+                // 并存储  res.data数据格式： {dictCate的type:[{name:value},{...}]}
+                layui.data("layui", {key: 'loginUser', value: res.data});
+            });
+
+
+            //登录成功查询数据字典并缓存到前端
+            premUtil.cacheDictData();
+
+
             //登入成功的提示与跳转
             layer.msg('登入成功', {
                 offset: '15px'
@@ -431,7 +445,7 @@
             }
             var url = "/api/v1/login";
             var param = JSON.stringify(field);
-            ajaxUtil.post(url,param , loginSuccess,reloadRandCodeImage);
+            ajaxUtil.post(url, param, loginSuccess, reloadRandCodeImage);
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可
 
         });
