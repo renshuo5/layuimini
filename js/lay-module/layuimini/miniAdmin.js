@@ -41,8 +41,8 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
             options.loadingTime = options.loadingTime || 1;
             options.pageAnim = options.pageAnim || false;
             options.maxTabNum = options.maxTabNum || 20;
-            $.getJSON(options.iniUrl, function (data) {
-                // var data = res.data;
+            $.getJSON(options.iniUrl, function (res) {
+                var data = res.data;
                 if (data == null) {
                     miniAdmin.error('暂无菜单信息')
                 } else {

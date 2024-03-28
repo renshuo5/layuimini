@@ -25,11 +25,6 @@
                 <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="fold"><i class="layui-icon">&#xe654;</i>全部折叠
                 </button>
 
-
-                <button class="layui-btn layui-btn-sm" lay-event="addsa"><i class="layui-icon layui-icon-light">&#xe6b1;</i>雪花</button>
-                <button class="layui-btn layui-btn-sm" lay-event="updata"><i class="layui-icon layui-icon-snowflake">&#xe674;</i>修改</button>
-                <button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon layui-icon-bluetooth">&#xe640;</i>删除</button>
-                <button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon layui-icon-time">&#xe666;</i>刷新</button>
             </div>
         </script>
         <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
@@ -120,7 +115,7 @@
                         maxmin: true,
                         shadeClose: true,
                         area: ['85%', '85%'],
-                        content: 'add-tree.html',
+                        content: 'add.html',
                         end: function () {
                             treeTableLoad();
                         }

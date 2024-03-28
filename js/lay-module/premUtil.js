@@ -10,7 +10,7 @@ layui.define(['jquery', 'form'], function (exports) {
     var btnPermission = {};
     if (layui.data("layui") != null && layui.data("layui") == undefined) {
         loginUser = layui.data("layui").loginUser;
-        btnPermission = loginUser.btnPermission;
+        btnPermission = layui.data("layui").loginUser.btnPermission;
     }
 
 
@@ -52,7 +52,7 @@ layui.define(['jquery', 'form'], function (exports) {
          */
         cacheDictData: function () {
             // 获取字典数据
-            $.get('/api/vi/dicts/all', function (res) {
+            $.get('/api/v1/sys/dicts/all', function (res) {
                 // 并存储  res.data数据格式： {dictCate的type:[{name:value},{...}]}
                 layui.data("layui", {key: 'dictData', value: res.data});
             });
@@ -71,7 +71,7 @@ layui.define(['jquery', 'form'], function (exports) {
             }
             var dicts = dictData[dictTypeCode];
             dicts.forEach(function (item) {
-                if (item.value === dictCode) {
+                if (item.value == dictCode) {
                     result = item.name;
                 }
             });
