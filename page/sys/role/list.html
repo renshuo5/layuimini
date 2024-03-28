@@ -115,7 +115,8 @@
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
             page: true,
-            skin: 'line'
+            even: true
+//            skin: 'line'
         });
 
         // 监听搜索操作
@@ -125,7 +126,6 @@
             layer.alert(result, {
                 title: '最终的搜索信息'
             });
-
             //执行搜索重载
             table.reload('currentTableId', {
                 page: {
@@ -156,11 +156,9 @@
                 $(window).on("resize", function () {
                     layer.full(index);
                 });
-            } else if (obj.event === 'distMenu') {  // 监听删除操作
+            } else if (obj.event === 'distMenu') {  // 监听分配权限操作
                 var checkStatus = table.checkStatus('currentTableId')
                     , data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-
                 var len = data.length;
                 if (len != 1) {
                     layer.alert("请选择一条数据");

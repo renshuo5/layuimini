@@ -74,50 +74,56 @@
 
                 getChecked: function (othis) {
                     var getData = tree.getChecked('parentMenuTree'); // 获取选中节点的数据
-//                layer.alert(JSON.stringify(getData), {shade: 0});
+//                    layer.alert(JSON.stringify(getData), {shade: 0});
                     if (getData.length < 1) {
                         layer.alert("请选择一项");
+                        return;
                     } else {
-                        var itemName = "";
-                        var itemId = "";
-                        //需要每一层都显示
-                        for (var i = 0; i < getData.length; i++) {
-                            for (var j = 0; j < getData[i].children.length; j++) {
-                                var child = getData[i].children[j].children;
-                                if (child != '' && child != null && child.length != 0) {
-                                    for (var k = 0; k < child.length; k++) {
-                                        itemName += child[k].title + ",";
-                                        itemId += child[k].id + ",";
-                                    }
-                                }
-                            }
-                        }
-                        itemName = (itemName.substring(itemName.length - 1) == ',') ? itemName.substring(0, itemName.length - 1) : itemName;
-                        itemId = (itemId.substring(itemId.length - 1) == ',') ? itemId.substring(0, itemId.length - 1) : itemId;
-                        $("[name='parentName']").val(itemName);
-                        $("[name='parentId']").val(itemId);
-//                    layer.close(layer.index);
+                        var mids = [];
+                        getTreeValue(getData, mids);
 
-                        var url = "/api/v1/sys/role/";
-                        ajaxUtil.post(url, JSON.stringify(fieldObj.field), success, fail, true);
+                        var param = {"roleId": roleId, "menuIds": mids};
+                        //需要每一层都显示
+//                        for (var i = 0; i < getData.length; i++) {
+//                            for (var j = 0; j < getData[i].children.length; j++) {
+//                                var child = getData[i].children[j].children;
+//                                if (child != '' && child != null && child.length != 0) {
+//                                    for (var k = 0; k < child.length; k++) {
+//                                        itemName += child[k].title + ",";
+//                                        itemId += child[k].id + ",";
+//                                    }
+//                                }
+//                            }
+//                        }
+                        var url = "/api/v1/sys/role/addRoleMenuLk";
+                        ajaxUtil.post(url, JSON.stringify(param), success, fail, true);
 
                     }
 
                 },
-                setChecked: function () {
-                    tree.setChecked('parentMenuTree', [12, 16]); // 勾选对应 id 值的节点
+                setChecked: function (data) {
+                    tree.setChecked('parentMenuTree', data); // 勾选对应 id 值的节点
                 },
                 reload: function () {
                     tree.reload('parentMenuTree', {}); // 重载实例
                 }
             });
 
+            /**
+             * 获取树形选中的值
+             */
+            function getTreeValue(list, mids) {
+                $(list).each(function (i, o) {
+                    mids.push(o.id);
+                    getTreeValue(o.children, mids);
+                });
+            }
 
             //通过roleId查询选中的菜单id进行回显操作
             setTreeId(roleId);
-            function setTreeId(rId){
-                var url = "/api/v1/sys/role/"+rId+"/getRoleMenuLk";
-                $.get(url,function (res) {
+            function setTreeId(rId) {
+                var url = "/api/v1/sys/role/" + rId + "/getRoleMenuLk";
+                $.get(url, function (res) {
                     var data = res.data;
                     tree.setChecked('parentMenuTree', data);
                 });
